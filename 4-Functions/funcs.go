@@ -29,7 +29,8 @@ func main() {
 	resultado := f("func 1")
 	fmt.Println(resultado)
 
-	// para armazenar os valores de uma func com vários retornos, vc precisa declarar a mesma quantidade de variaveis do lado esquerdo da chamada da func, onde cada uma vai receber um dos valores que é retornado pela func, como abaixo
+	// para armazenar os valores de uma func com vários retornos, vc precisa declarar a mesma quantidade de variaveis do lado esquerdo da chamada da func, onde cada uma vai receber um dos valores que é retornado pela func, como abaixo.
+	// caso vc n queira armazenar todos os valores retornados pela func em uma variavel, vc pode colocar, no lugar da variavel que armazenaria o valor, um underline.
 	resultSum, resultSub := calcMat(20, 15)
 	fmt.Println(resultSum, resultSub)
 }
