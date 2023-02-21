@@ -13,4 +13,5 @@ func main() {
 
 	erro := checkmail.ValidateFormat("123")
 	fmt.Println(erro)
+	auxiliar.escrever2()
 }
