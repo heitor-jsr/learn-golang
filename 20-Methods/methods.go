@@ -15,7 +15,7 @@ func (u user) salvar() {
 	fmt.Println("dentro de salvar")
 }
 
-// os métodos também podem alterar um valor dentro de uma determinada estrutura, usando a logica dos ponteiros
+// os métodos também podem alterar um valor dentro de uma determinada estrutura, usando a logica dos ponteiros. nesses casos, ao chamar o metodo, ele vai alterar algum valor dentro do struct, sendo desnecessária a desreferenciação
 
 func (u *user) alterar() {
 	u.idade++
