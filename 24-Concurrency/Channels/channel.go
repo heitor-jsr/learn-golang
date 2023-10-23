@@ -13,6 +13,8 @@ import (
 
 // deadlock => situação na qual o canal está aguardando receber algum dado, mas não existe mais nenhuma ocasião em que são enviados dados ao canal. isso implica que a aplicação aguarda eternamente algo que nunca vai chegar. OBS: não é erro em compilação, apenas em execução. para resolver o problema, vc deve verificar se o canal esta aberto ou fechado, e se estiver fechado, "matar" a execução do loop infinito.
 
+// para evitar o deadlock, o recomendável é verificar se o canal está aberto ou não antes de continuar a execução do programa. no for abaixo, isso é feito com a verificação de open (pode ser dado qualquer nome pra essa variavel).
+
 func main() {
 	channel := make(chan string)
 
@@ -28,6 +30,8 @@ func main() {
 		fmt.Println(msg)
 	}
 
+	//o mesmo de cima pode ser feito com for mensagem := range canal {} => isso vai dizer que, enquanto o canal estiver aberto, o go vai executar a função dentro de {}
+
 }
 
 func escrever(text string, channel chan string) {
@@ -36,6 +40,6 @@ func escrever(text string, channel chan string) {
 		channel <- text
 		time.Sleep(time.Second)
 	}
-
+	// ao finalizar o for acima, o canal é fechado para comunicação. não recebe e nem envia mais dados.
 	close(channel)
 }

@@ -11,6 +11,8 @@ func main() {
 
 	// para contonar isso podemos usar o buffer ao declarar um canal. o buffer só vai bloquear a execução do programa quando o canal atingir sua capacidade máxima. a capacidade máxima é definida pelo buffer.
 
+	// o canal com buffer só bloqueia a execução do codigo quando atingir a capacidade maxima dele. já o canal sem buffer vai bloquear a execução do cod sempre que tiver um lugar enviando um valor, e outro q nunca recebe o valor - e vice versa.
+
 	channel <- "oi mundo"
 
 	msg := <-channel
