@@ -9,14 +9,13 @@ type cenarioDeTeste struct {
 
 func TestTipoDeEndereco(t *testing.T) {
 	cenariosDeTeste := []cenarioDeTeste{
-		{"Avenida Paulista", "Avenida"},
+		{"Avenida Paulista", "avenida"},
 		{"Rua Paulista", "rua"},
 		{"Estrada Paulista", "estrada"},
 		{"rodovia Paulista", "Tipo inválido"},
 		{"alameda Paulista", "Tipo inválido"},
 		{"praça Paulista", "Tipo inválido"},
 		{"quadra Paulista", "Tipo inválido"},
-		{"quadra Paulista", "quadra"},
 	}
 
 	for _, cenario := range cenariosDeTeste {
