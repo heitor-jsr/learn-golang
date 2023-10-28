@@ -166,6 +166,12 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	if usuario.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Usuário não encontrado"))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 
 	if err := json.NewEncoder(w).Encode(usuario); err != nil {
