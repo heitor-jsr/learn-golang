@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+
 	"github.com/gorilla/mux"
 )
 
@@ -137,5 +139,36 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	// primeira coisa que precisamos ter em mente é que aqui nos precisamos ler o parametro de busca da rota (o id que é passado para ela vai representar o id que o cliente quer recuperar do db). para isso, basta usar o mux.Vars()
 	params := mux.Vars(r)
 	// ocorre que o metodo acima vai retornar o id em str, mas precisamos dele em int. para isso, basta converte-lo, conforme abaixo
-	ID, err := strconv.ParseInt(params["id"], 10, 64)
+	ID, err := strconv.ParseUint(params["id"], 10, 32)
+	if err != nil {
+		w.Write([]byte("Erro ao converter o id"))
+		return
+	}
+
+	db, err := database.Connect()
+	if err != nil {
+		w.Write([]byte("Erro ao conectar com o banco de dados"))
+		return
+	}
+
+	line, err := db.Query("select * from usuarios where id = ?", ID)
+	if err != nil {
+		w.Write([]byte("Erro ao buscar o usuario"))
+		return
+	}
+
+	var usuario usuario
+	// mesma coisa do for do metodo anterior. a unica diferença é que vai verificar se a linha com o dado retornado do banco de dados existe. se existir, vai retornar os dados para o cliente, somente se o scan não retornar nenhum erro quando comparar os dados retornados com os tipos do struct.
+	if line.Next() {
+		if err := line.Scan(&usuario.ID, &usuario.Name, &usuario.Email); err != nil {
+			w.Write([]byte("Erro ao retornar os dados"))
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(usuario); err != nil {
+		w.Write([]byte("Erro ao retornar os dados"))
+	}
 }
