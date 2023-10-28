@@ -135,7 +135,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetUser retorna um usuário específico do banco de dados
-func GetUser(w http.ResponseWriter, r *http.Request) {
+func GetUserById(w http.ResponseWriter, r *http.Request) {
 	// primeira coisa que precisamos ter em mente é que aqui nos precisamos ler o parametro de busca da rota (o id que é passado para ela vai representar o id que o cliente quer recuperar do db). para isso, basta usar o mux.Vars()
 	params := mux.Vars(r)
 	// ocorre que o metodo acima vai retornar o id em str, mas precisamos dele em int. para isso, basta converte-lo, conforme abaixo
@@ -177,4 +177,56 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(usuario); err != nil {
 		w.Write([]byte("Erro ao retornar os dados"))
 	}
+}
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	ID, err := strconv.ParseUint(params["id"], 10, 32)
+
+	if err != nil {
+		w.Write([]byte("Erro ao converter o id"))
+		return
+	}
+	// depois de ler o ID, como no caso anterior, aqui vamos precisar ler o corpo da nossa requisição, pra somente depois abrir a conexão com o db.
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.Write([]byte("Erro ao ler o corpo da requisição"))
+		return
+	}
+
+	var usuario usuario
+
+	// mesma coisa do metodo post, vai converter o json recebido para um struct, e armazenar ele dentro da referencia de memoria da variavel inicializada acima.
+	if err = json.Unmarshal(reqBody, &usuario); err != nil {
+		w.Write([]byte("Erro ao converter o json para struct"))
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		w.Write([]byte("Erro ao conectar com o banco de dados"))
+		return
+	}
+
+	defer db.Close()
+
+	// o proximo passo é realizar o statement. o statement é feito em todas as operações que não envolvem consulta no banco de dados, como insert, update, delete.
+	statement, err := db.Prepare("update usuarios set nome = ?, email = ? where id = ?")
+
+	if err != nil {
+		w.Write([]byte("Erro ao criar o statement"))
+		return
+	}
+	defer statement.Close()
+
+	// uma coisa importante é que o statement vai sempre retornar dois dados: a quantidade de linhas afetadas e o id inserido ou atualizado. como nesse caso não precisamos de todas as informações, podemos ignorar o primeiro retorno dela.
+
+	if _, err = statement.Exec(usuario.Name, usuario.Email, ID); err != nil {
+		w.Write([]byte("Erro ao atualizar o usuário"))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

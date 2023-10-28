@@ -20,7 +20,9 @@ func main() {
 
 	router.HandleFunc(("/users"), server.GetUsers).Methods("GET")
 
-	router.HandleFunc(("/users/{id}"), server.GetUser).Methods("GET")
+	router.HandleFunc(("/users/{id}"), server.GetUserById).Methods("GET")
+
+	router.HandleFunc(("/users/{id}"), server.UpdateUser).Methods("PUT")
 
 	log.Fatal(http.ListenAndServe(":5000", router))
 }
