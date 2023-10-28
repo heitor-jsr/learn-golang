@@ -18,5 +18,9 @@ func main() {
 	// método do pacote mux que vai lidar com uma função de requisição ao banco de dados. essa função é a getUsers, e deve ter a mesma assinatura que uma função de requisição que usa o padrão http usa. no mux também podemos especificar os metodos dentro dessa funcção.
 	router.HandleFunc(("/users"), server.CreateUser).Methods("POST")
 
+	router.HandleFunc(("/users"), server.GetUsers).Methods("GET")
+
+	router.HandleFunc(("/users/{id}"), server.GetUser).Methods("GET")
+
 	log.Fatal(http.ListenAndServe(":5000", router))
 }
